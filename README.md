@@ -129,9 +129,13 @@ Assess whether timing effects create casual performance shifts.
 ## Tech Stack
 
 Python
+
 Pandas
+
 Statsmodels
+
 Scikit-learn
+
 Matplotlib / Seaborn
 
 
