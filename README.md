@@ -1,4 +1,4 @@
-# Casual Evaluation of Marketing Campaign Performance
+# Causal Evaluation of Marketing Campaign Performance
 ### A/B Testing, Regression Adjustment, and Difference-in-Differences (DiD)
 
 ## Executive Summary
