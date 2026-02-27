@@ -76,31 +76,30 @@ conversion ~ contact + age + job + loan + previous + macro variables
 
 This step evaluates whether channel performance remains significant after accounting for customer heterogeneity.
 
-### 3. Difference-in-Differences (DiD)
+### 3. Timing Effect and Interaction Analysis (Quasi-Experimental Check)
 
-**Defined**
-
-* Treatment group: Cellular contact
-* Control group: Telephone contract
-* Pre/Post period: Campaign timing segmentation
+**Motivation**
+While the dataset does not provide an explicit channel policy change timestamp, we assess whether channel performance varies across campaign timing segments. This serves as a quasi-experiemntal robustness check.
 
 **Model**
+` conversion ~ contact + C(month) + contact x C(month) + controls`
 
-conversion ~ treated + post + treated x post
+**Objective**
 
-The interaction term estimates incremental treatment impact under the parallel trends assumption.
+- Evaluate whether channel impact is stable across months
+- Examine timing heterogeneity in campaign effectivness
+- Ensure robustness of baseline and regression-adjusted findings
 
-**Purpose**
+**Interpretation**
+Interaction coefficients capture *month-specific deviations* from the baseline channel effect, allowing assessment of temporal variation without assuming a structural policy shift.
 
-Assess whether timing effects create causal performance shifts.
-
-
+This analysis adopts a quasi-experimental perspective by examining channel-time interactions rather than assuming a discrete policy intervention.
 
 ## Key Findings
 
 * Cellular contact shows higher baseline conversion rate compared to telephone.
 * Regression-adjusted estimates confirm that channel effect remains statistically significant after controlling for demographic and behavioural variables.
-* Difference-in-Differences analysis suggests measurable incremental impact associated with timing-channel interaction.
+* Interaction-based analysis indicates that channel performance varies across campaign timing segments.
 * Results highlight the importance of causal validation before large-scale rollout decisions.
 
 
@@ -115,16 +114,15 @@ Assess whether timing effects create causal performance shifts.
 ## Limitations
 
 * Observational dataset (not true randomised experiment)
-* Parallel trends assumption in DiD
+* Interaction model assumes stable baseline diffferences across timing segments
 * Potential unobserved confounders
 
-**Future improvements**
+**Future Improvements**
 
 * Instrumental variable analysis
 * Propensity score matching
 * Robustness checks with cross-validation
-* Uplift modelling for individual-level treatment effect estimation
-
+* Causal modelling with clearly defined intervention events
 
 ## Tech Stack
 
