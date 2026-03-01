@@ -96,7 +96,7 @@ Interaction coefficients capture *month-specific deviations* from the baseline c
 * Cellular contact shows higher baseline conversion rate compared to telephone.
 * Interaction-based analysis indicates that channel performance varies across campaign timing segments.
 * Results highlight the importance of causal validation before large-scale rollout decisions.
-* Regression-adjusted estimates (see [03_logistic_regression]('https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/1116494bd7a23d33a51aa90144cf99a6e2dd6fe6/notebooks/03_logistic_regression.ipynb') indicate a statistically significant positive association between cellular contact and conversion. However, timing heterogeneity analysis (see [04_timing_effect_analysis]('https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/1116494bd7a23d33a51aa90144cf99a6e2dd6fe6/notebooks/04_timing_effect_analysis.ipynb') suggests that this effect is not uniformly persistent across months.
+* Regression-adjusted estimates (see [03_logistic_regression]('https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/1116494bd7a23d33a51aa90144cf99a6e2dd6fe6/notebooks/03_logistic_regression.ipynb')) indicate a statistically significant positive association between cellular contact and conversion. However, timing heterogeneity analysis (see [04_timing_effect_analysis]('[https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/1116494bd7a23d33a51aa90144cf99a6e2dd6fe6/notebooks/04_timing_effect_analysis.ipynb](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/1116494bd7a23d33a51aa90144cf99a6e2dd6fe6/notebooks/04_timing_effect_analysis.ipynb)')) suggests that this effect is not uniformly persistent across months.
 
 ## Business Implications
 
