@@ -1,0 +1,11 @@
+term,month,Odds Ratio cellular vs telephone,CI Lower,CI Upper,OR_greater_1,CI_excludes_1
+cellular vs telephone (mar),mar,1.7476814010609714,0.00018899439945841283,16161.274029109767,True,False
+cellular vs telephone (apr),apr,0.8220548925280383,0.017606734052651736,38.38157856581622,False,False
+cellular vs telephone (may),may,3.031726521995847,0.0001154069596315346,79643.07987593439,True,False
+cellular vs telephone (jun),jun,7.99953694056964,0.17675076550153368,362.0498676877472,True,False
+cellular vs telephone (jul),jul,1.8313275976320738,0.002464558580381104,1360.7957208021637,True,False
+cellular vs telephone (aug),aug,0.871760204000167,,,False,False
+cellular vs telephone (sep),sep,3.1169921785759755,0.32673845071168445,29.73522161270494,True,False
+cellular vs telephone (oct),oct,0.7715287885808524,0.0007547435168326726,788.6873597895467,False,False
+cellular vs telephone (nov),nov,0.799756987669022,,,False,False
+cellular vs telephone (dec),dec,1.5495551988811742,0.0002863604787268227,8384.96054013884,True,False
