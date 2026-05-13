@@ -1,7 +1,9 @@
 # Causal-Oriented Evaluation of Marketing Campaign Performance A/B Testing and Regression Adjustment
 
 ![Page1-Executive_Overview](reporting/Page 1-Executive Overview.jpg)
+
 ![Page2-Forest_Plot](reporting/Page 2-Forest Plot.jpg)
+
 ![Page3-Timing](reporting/Page 3-Timing.jpg)
 
 ## Executive Summary
