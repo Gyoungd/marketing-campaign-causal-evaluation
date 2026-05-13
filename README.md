@@ -1,10 +1,10 @@
 # Causal-Oriented Evaluation of Marketing Campaign Performance A/B Testing and Regression Adjustment
 
-![Page1-Executive_Overview](reporting/Page 1-Executive Overview.jpg)
+![Page1-Executive_Overview](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/66c646813dd99d0b527bce49eac389a1f7a01c98/reporting/Page%201-Executive%20Overview.jpg)
 
-![Page2-Forest_Plot](reporting/Page 2-Forest Plot.jpg)
+![Page2-Forest_Plot](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/66c646813dd99d0b527bce49eac389a1f7a01c98/reporting/Page%202-Forest%20Plot.jpg)
 
-![Page3-Timing](reporting/Page 3-Timing.jpg)
+![Page3-Timing](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/66c646813dd99d0b527bce49eac389a1f7a01c98/reporting/Page%203-Timing.jpg)
 
 ## Executive Summary
 This project evaluates the effectiveness of a direct marketing campaign using structured causal analysis techniques.
