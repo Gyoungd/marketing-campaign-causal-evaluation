@@ -1,43 +1,35 @@
-# Causal-Oriented Evaluation of Marketing Campaign Performance A/B Testing and Regression Adjustment
 
-![Page1-Executive_Overview](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/66c646813dd99d0b527bce49eac389a1f7a01c98/reporting/Page%201-Executive%20Overview.jpg)
+# Causal-Oriented Evaluation of Marketing Campaign Channel Performance
+### Observational Comparison and Regression Adjustment
 
-![Page2-Forest_Plot](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/66c646813dd99d0b527bce49eac389a1f7a01c98/reporting/Page%202-Forest%20Plot.jpg)
+![Page1-Executive_Overview](reporting/Page%201-Executive%20Overview.jpg)
 
-![Page3-Timing](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/66c646813dd99d0b527bce49eac389a1f7a01c98/reporting/Page%203-Timing.jpg)
+![Page2-Forest_Plot](reporting/Page%202-Forest%20Plot.jpg)
 
-## Executive Summary
-This project evaluates the effectiveness of a direct marketing campaign using structured causal analysis techniques.
+![Page3-Timing](reporting/Page%203-Timing.jpg)
 
-Rather than relying solely on naïve conversion rate comparisons, the analysis applies:
+## Purpose
 
-* A/B testing (proportion tests)
-* Logistic regression with confounder adjustment
+This project evaluates channel performance in a direct marketing campaign using observational
+data, in which contact method was recorded rather than randomly assigned.
 
-to estimate the association between communication channels and customer conversion, while accounting for observable confounders and timing heterogeneity.
+A raw conversion-rate gap cannot be read as a channel effect here, because channel allocation is
+correlated with both customer characteristics and campaign timing. The project asks four
+questions:
 
-The objective is to determine whether observed performance differences are statistically improved and causally defensible, supporting data-driven campaign optimisation decisions.
-
-
-## Business Context
-Marketing teams often compare campaign performance using raw conversion rates. However, such comparisons may be biased due to:
-
-* Customer selection effects
-* Channel allocation differences
-* Timing confounders
-* Lifecycle variation
-
-This project address the following business questions:
-1. Deos communication channel (cellular vs telephone) significantly affect conversion rate?
-2. Is the observed difference robust after controlling for customer characteristics?
-3. Does campaign timing moderate the association between contact method and conversion?
-4. What strategic recommendation should be made for future campaigns?
+1. How large and how precise is the raw conversion gap between cellular and telephone contact?
+2. How much of that gap survives once observable customer and macroeconomic differences are
+   controlled?
+3. Is the remaining association stable across campaign months, or concentrated in particular
+   periods?
+4. What can and cannot be recommended for future channel decisions on this evidence?
 
 **Primary KPI**
 * Conversion rate (binary outcome)
 
 
 ## Dataset
+
 Portuguese Bank Marketing Dataset (UCI Machine Learning Repository)
 
 * ~41,000 observations
@@ -54,62 +46,117 @@ Portuguese Bank Marketing Dataset (UCI Machine Learning Repository)
 * previous campaign interactions
 * Macroeconomic indicators
 
+**Excluded variable**
+* `duration` (call length) is dropped. It is only known after a call ends, so it cannot inform
+  prospective decisions. The UCI documentation flags this explicitly.
 
-## Methodology
 
-### 1. Naïve A/B Testing
-* Compared conversion rates by contact method
-* Conducted two-proportion z-test
-* Computed confidence intervals
+## Process
+
+### Step 1. Unadjusted Two-Group Comparison (notebook 02)
+
+* Computed conversion rate, absolute lift (percentage points) and relative lift by contact method
+* Conducted a two-proportion z-test (H0: p_cellular = p_telephone, two-sided)
+* Computed 95% confidence intervals for each group rate and for the difference between groups
+* Recorded the group allocation (26,144 cellular / 15,044 telephone) as an observed property of
+  the data, not as a design parameter
 
 **Purpose**
-Establish baseline performance difference without adjustment.
+Establish the size and statistical precision of the baseline gap before any adjustment, so that
+the effect of adjustment in Step 2 can be measured against it.
 
+**What this step does not establish**
+Causality. A two-proportion z-test answers whether the difference exceeds sampling noise. It does
+not identify the channel as the cause. Because contact method was not randomly assigned, the gap
+at this stage still mixes the channel effect with customer selection and campaign timing.
 
-### 2. Logistic Regression (Confounder Adjustment)
+### Step 2. Logistic Regression with Confounder Adjustment (notebook 03)
 
 **Model specification**
+`conversion ~ contact + age + job + loan + previous + macroeconomic variables`
 
-conversion ~ contact + age + job + loan + previous + macro variables
+* Estimated the adjusted odds ratio for contact method, holding observable confounders constant
+* Compared the adjusted estimate against the unadjusted odds ratio, to quantify how much of the
+  raw gap is explained by group composition
+* Reported the odds ratio with its 95% confidence interval and p-value
+* The channel indicator enters the model unscaled, so its exponentiated coefficient reads
+  directly as the telephone-to-cellular odds ratio
 
-**Objectives**
+**Purpose**
+Test whether the channel association survives adjustment for customer heterogeneity and
+macroeconomic conditions, and measure how much of the raw gap that adjustment absorbs.
 
-* Control for observable confounders
-* Estimate adjusted channel impact
-* Interpret odds ratios
+**Assumption being made**
+Conditional exchangeability: that the measured covariates capture the differences between the two
+groups that also affect conversion. This is an assumption, not a verified fact. Unmeasured
+confounders remain possible, so the adjusted estimate is read here as an association net of what
+was measured (see Limitations).
 
-This step evaluates whether channel performance remains significant after accounting for customer heterogeneity.
-
-### 3. Timing Effect and Interaction Analysis
+### Step 3. Timing Heterogeneity (Contact x Month Interaction, notebook 04)
 
 **Motivation**
-While the dataset does not provide an explicit channel policy change timestamp, we assess whether channel performance varies across campaign timing segments. This serves as a robustness check to assess timing heterogeneity.
+The dataset provides no explicit channel policy change timestamp, so this step does not test an
+intervention. It asks a narrower question: does the channel association hold across campaign
+timing, or is it concentrated in particular months?
 
 **Model**
-` conversion ~ contact + C(month) + contact x C(month) + controls`
+`conversion ~ contact + C(month) + contact x C(month) + controls`
 
-**Objective**
+* Estimated month-specific deviations from the baseline channel effect
+* Reported each month's odds ratio together with its 95% confidence interval
+* Checked how channel allocation is distributed across months
 
-- Evaluate whether channel impact is stable across months
-- Examine timing heterogeneity in campaign effectivness
-- Ensure robustness of baseline and regression-adjusted findings
+**Purpose**
+Serve as a robustness check on Step 2, and locate where in the campaign calendar the association
+is concentrated.
 
-**Interpretation**
-Interaction coefficients capture *month-specific deviations* from the baseline channel effect, allowing assessment of temporal variation without assuming a structural policy shift.
+**Allocation caveat**
+Channel and campaign timing are heavily entangled: 84.7% of telephone contacts fall in May and
+June, against 24.2% of cellular contacts. The interaction model also excludes macroeconomic
+controls because they are collinear with month. Month-level estimates therefore absorb whatever
+else changed in that month, and are read as heterogeneity to be explained rather than as
+month-specific channel effects.
 
-## Key Findings
 
-* Cellular contact shows higher baseline conversion rate compared to telephone.
-* Interaction-based analysis indicates that channel performance varies across campaign timing segments.
-* Results highlight the importance of causal validation before large-scale rollout decisions.
-* Regression-adjusted estimates (see [03_logistic_regression](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/1116494bd7a23d33a51aa90144cf99a6e2dd6fe6/notebooks/03_logistic_regression.ipynb)) indicate a statistically significant positive association between cellular contact and conversion. However, timing heterogeneity analysis (see [04_timing_effect_analysis](https://github.com/Gyoungd/marketing-campaign-causal-evaluation/blob/1116494bd7a23d33a51aa90144cf99a6e2dd6fe6/notebooks/04_timing_effect_analysis.ipynb)) suggests that this effect is not uniformly persistent across months.
+## Findings
+
+* **The raw gap is large and precisely estimated.** Cellular converts at 14.74% against 5.23% for
+  telephone: +9.51 percentage points (95% CI 8.95-10.07), z = 29.38, p < 0.001. This is a
+  description of the data, not a channel effect.
+* **Adjustment absorbs about a third of the gap.** The unadjusted odds ratio of 3.13 falls to
+  2.16 (95% CI 1.87-2.49) once customer and macroeconomic covariates are controlled. The size of
+  that shift is the footprint of non-random channel allocation.
+* **The estimate is not sensitive to specification.** A second model with a different control set
+  and no macroeconomic variables (notebook 04) gives an average adjusted odds ratio of 2.33
+  (95% CI 2.14-2.53), close to the 2.16 from notebook 03.
+* **The association is concentrated in time, not uniform.** Four of ten months show intervals
+  excluding 1 (May 3.19, June 8.70, July 1.82, September 3.11); the remaining six do not. June
+  carries the largest estimate (95% CI 7.00-10.81), but June is also where the two channels
+  overlap least, so month-level figures are reported as heterogeneity, not as month-specific
+  channel effects.
+
+
+## Outputs
+
+| Notebook | What it does | Exports (`data/powerbi_exports/`) | Power BI page |
+|---|---|---|---|
+| `01_data_preparation` | Cleaning and preprocessing | `preprocessed-bank-data.csv` (not tracked) | - |
+| `02_unadjusted_channel_comparison` | Rates, lift, z-test, confidence intervals | `channel_kpi.csv`, `channel_comparison_meta.csv` | Page 1: Executive Overview |
+| `03_logistic_regression` | Adjusted odds ratio (GLM), interaction check | `glm_main_coefficients.csv`, `glm_interaction_coefficients.csv` | Page 2: Forest Plot |
+| `04_timing_effect_analysis` | Contact x month interaction, monthly ORs | `timing_monthly_or_ci.csv`, `monthly_channel_conversion.csv` | Page 3: Timing |
+
+The Power BI report lives in `visuals/`; its three pages are exported as JPGs in `reporting/` and
+shown at the top of this README.
+
 
 ## Business Implications
 
-* Prioritise higher-performing communication channels for budget allocation.
-* Validate performance differences using regression-based controls rather than raw comparison.
-* Incorporate causal frameworks in campaign evaluation pipelines.
-* Avoid decision-making based solely on descriptive statistics.
+* Treat the adjusted estimate (OR 2.16), not the raw gap (OR 3.13), as the planning number for
+  channel budget allocation.
+* Validate performance differences with regression-based controls before acting on raw
+  comparisons.
+* Where a channel decision carries real budget, run a randomised holdout with contemporaneous
+  exposure of both channels rather than relying on historical logs.
 
 
 ## Limitations
@@ -117,7 +164,10 @@ Interaction coefficients capture *month-specific deviations* from the baseline c
 * Observational dataset (not true randomised experiment)
 * Interaction model assumes stable baseline differences across timing segments
 * Potential unobserved confounders
-* The dataset does not provide longitudinal indexing across years, preventing formal Difference-in-Differences implementation.
+* The dataset does not provide longitudinal indexing across years, preventing formal
+  Difference-in-Differences implementation.
+* Macroeconomic controls are collinear with month, so the interaction model cannot separate
+  month-specific channel effects from month-specific conditions.
 
 **Future Improvements**
 
@@ -125,6 +175,7 @@ Interaction coefficients capture *month-specific deviations* from the baseline c
 * Propensity score matching
 * Robustness checks with cross-validation
 * Causal modelling with clearly defined intervention events
+
 
 ## Tech Stack
 
@@ -138,10 +189,12 @@ Scikit-learn
 
 Matplotlib / Seaborn
 
+Power BI
+
 
 ## Data Access
 
-The dataset used in this project is provided by StrataScratch for educational purposes.
+The dataset used in this project is provided by UCI for educational purposes.
 
 Due to licensing restrictions, the raw dataset is not included in this repository.
 
@@ -151,4 +204,3 @@ To reproduce the analysis:
 3. Run the notebooks in sequential order.
 
 This project is intended for analytical demonstration purposes only.
-
